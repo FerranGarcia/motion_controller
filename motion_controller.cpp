@@ -173,7 +173,7 @@ void MotionController::update() {
 
     Vec3 result;
 
-    if (delta_max > 0.1) {
+    if (delta_max > 0.5) {
         float max_accel = ((desired.x == 0 && desired.y == 0 && desired.z == 0) ? 100 : 50) * dt;
 
         max_accel = std::fmax(-_acce, std::fmin(_acce, max_accel));
