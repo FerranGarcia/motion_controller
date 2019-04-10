@@ -22,7 +22,7 @@ qitoolchain info
 qibuild add-config pepper2.5 --toolchain pepper2.5
 ```
 
-#### Configure the project####
+#### Configure the project ####
 ```
 qibuild init
 qibuild config --wizard (specify the build directory)
