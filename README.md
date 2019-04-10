@@ -22,12 +22,17 @@ qitoolchain info
 qibuild add-config pepper2.5 --toolchain pepper2.5
 ```
 
-#### Configure, build and deploy ####
+#### Configure the project####
 ```
+qibuild init
+qibuild config --wizard (specify the build directory)
 qibuild configure -c pepper2.5 motion_controller
+```
+
+#### Build and deploy ####
+```
 qibuild make -c pepper2.5 motion_controller
 qibuild deploy -c pepper2.5 --url nao@10.0.204.154:/home/nao/dev/motion_controller motion_controller
-
 ```
 
 Otherwise, once the module has been built, move the compiled shared object file to the robot, and its location to /home/nao/naoqi/preferences/autoload.ini
