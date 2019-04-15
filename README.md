@@ -35,7 +35,8 @@ qibuild make -c pepper2.5 motion_controller
 qibuild deploy -c pepper2.5 --url nao@10.0.204.154:/home/nao/dev/motion_controller motion_controller
 ```
 
-Otherwise, once the module has been built, move the compiled shared object file to the robot, and its location to /home/nao/naoqi/preferences/autoload.ini
+Otherwise, once the module has been built, move the compiled shared object file to the robot.
+In order to load the custom controller automatically when booting, set the location of the .so in: /home/nao/naoqi/preferences/autoload.ini 
 
 Restart NaoQI:
 ```
