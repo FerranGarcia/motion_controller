@@ -45,6 +45,8 @@ public:
   void set_angular_velocity(const float& angular);
   
   void set_acceleration(const float& acce);
+  
+  bool is_enabled();
 
 protected:
   Vec3 get_desired_wheel_velocities();
@@ -75,6 +77,9 @@ private:
   float _linear_vel = 0.35f;
   float _angular_vel = 0.35f;
   float _acce = 0.5f;
+  
+  std::chrono::system_clock::time_point last_move_command_;
+  bool is_enabled_ = false;
 };
 
 #endif
