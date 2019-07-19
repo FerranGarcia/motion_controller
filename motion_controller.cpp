@@ -23,6 +23,10 @@ MotionController::MotionController(boost::shared_ptr<AL::ALBroker> broker,
   functionName("set_acceleration", getName(), "Sets a given acceleration");
   addParam("acc", "Acceleration along the x y and wz axis in meters per second squared");
   BIND_METHOD(MotionController::set_acceleration);
+  
+  functionName("is_enabled", getName(), "Returns wether this node is enabled (received move commands)");
+  addParam("", "");
+  BIND_METHOD(MotionController::is_enabled);
 };
 
 void MotionController::init() {
@@ -45,6 +49,8 @@ void MotionController::init() {
   commands[1] = AL::ALValue(keys);
 
   _dcm_proxy.createAlias(commands);
+  
+  last_move_command_ = std::chrono::system_clock::now();
 
   _update_thread = std::thread(&MotionController::update, this);
 }
@@ -56,6 +62,10 @@ void MotionController::exit() {
 void MotionController::move(const float& vx, const float& vy, const float& wz) {
   std::lock_guard<std::mutex> lock(_thread_lock);
 
+  // calculate time since last execution
+  is_enabled_ = true;
+  last_move_command_ = std::chrono::system_clock::now();
+  
   _desired_velocity = Vec3(
     std::fmax(-_linear_vel, std::fmin(_linear_vel, vx)),
     std::fmax(-_linear_vel, std::fmin(_linear_vel, vy)),
@@ -187,7 +197,18 @@ void MotionController::update() {
         result.z = desired.z;
     }
 
-    set_wheel_velocities(result);
+    float seconds_since_last_move_command = ((float)std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_move_command_).count()) / 1000;
+    if ( is_enabled_ ) {
+        if ( seconds_since_last_move_command < 1. ) 
+        {
+            set_wheel_velocities(result);
+        } else {
+            result.x = 0;
+            result.y = 0;
+            result.z = 0;
+            set_wheel_velocities(result);
+        }
+    }
     last_update = current_time;
 
     std::this_thread::sleep_for (std::chrono::milliseconds(30));
@@ -246,3 +267,7 @@ void MotionController::set_acceleration(const float& acce)
     }
 }
 
+bool MotionController::is_enabled()
+{
+    return is_enabled_;
+}
